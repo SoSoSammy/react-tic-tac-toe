@@ -110,6 +110,8 @@ export default function Game() {
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
+        <label htmlFor="sort-moves">Sort Moves in Descending Order</label>
+        <input id="sort-moves" type="checkbox" />
         <ol>{moves}</ol>
       </div>
     </div>
