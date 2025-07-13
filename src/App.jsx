@@ -64,6 +64,7 @@ export default function Game() {
   const [currentMove, setCurrentMove] = useState(0); 
   const xIsNext = currentMove % 2 === 0; // If current move is even, then X is next
   const currentSquares = history[currentMove];
+  const [historyIsDescending, setHistoryIsDescending] = useState(false);
   
   function handlePlay(nextSquares) {
     // Use currentMove + 1 since the end of .slice is not included
@@ -76,33 +77,42 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
+  function sortMoves() {
+    setHistoryIsDescending(!historyIsDescending);
+  }
+
+
+  const historyToRender = historyIsDescending ? history.toReversed() : history;
+
   // squares is the current element in the iteration, move is the index of that element
-  const moves = history.map((squares, move) => {
+  const moves = historyToRender.map((squares, move) => {
+    // find the original move index in unsorted history and use it for rendering and functionality
+    const originalMoveNumber = history.findIndex(s => s === squares);
     let description;
-    if (move === currentMove) {
-      description = 'You are at move #' + move;
+    if (originalMoveNumber === currentMove) {
+      description = 'You are at move #' + originalMoveNumber;
     }
-    else if (move > 0) {
-      description = 'Go to move #' + move;
+    else if (originalMoveNumber > 0) {
+      description = 'Go to move #' + originalMoveNumber;
     } else {
       description = 'Go to game start';
     }
 
-    if (move === currentMove) {
+    if (originalMoveNumber === currentMove) {
       return (
-        <li key={move}>
+        <li key={originalMoveNumber}>
           {description}
         </li>
       );
     } else {
         return (
-          <li key={move}>
-            <button onClick={() => jumpTo(move)}>{description}</button>
+          <li key={originalMoveNumber}>
+            <button onClick={() => jumpTo(originalMoveNumber)}>{description}</button>
           </li>
           );
     }
-  
-  });
+});
+
 
   return (
     <div className="game">
@@ -111,7 +121,7 @@ export default function Game() {
       </div>
       <div className="game-info">
         <label htmlFor="sort-moves">Sort Moves in Descending Order</label>
-        <input id="sort-moves" type="checkbox" />
+        <input id="sort-moves" type="checkbox" onClick={sortMoves} />
         <ol>{moves}</ol>
       </div>
     </div>
