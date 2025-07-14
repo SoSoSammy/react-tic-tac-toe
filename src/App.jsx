@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
-function Square({ value, onSquareClick }) {
+function Square({ value, winnerClass, onSquareClick }) {
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button className={"square" + winnerClass} onClick={onSquareClick}>
       {value}
     </button>
   );
 }
 
 function Board({ xIsNext, squares, onPlay }) {
-  
+  const [squareWinnerClasses, setSquareWinnerClasses] = useState(Array(9).fill(''));
   
   function handleClick(i) {
     // Make sure not overwriting any existing values, or play if the game is won
@@ -24,6 +24,36 @@ function Board({ xIsNext, squares, onPlay }) {
       nextSquares[i] = 'O';
     }
     onPlay(nextSquares); // Tell Game to update
+  }
+
+  function calculateWinner(squares) {
+    const possibleWinningCases = [
+      // rows
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      // columns
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      // diagonals
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    // Go through all possible cases and check that the same player has all the spaces
+    for (let i = 0; i < possibleWinningCases.length; i++) {
+      const [a, b, c] = possibleWinningCases[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        // Highlight the squares the caused the win
+        squareWinnerClasses[a] = ' winner-square';
+        squareWinnerClasses[b] = ' winner-square';
+        squareWinnerClasses[c] = ' winner-square';
+        return squares[a];
+      }
+    }
+
+    return null;
   }
   
   const winner = calculateWinner(squares);
@@ -46,10 +76,10 @@ function Board({ xIsNext, squares, onPlay }) {
         rows.map((rowIndex) => (
         <div key={`row-${rowIndex}`} className="board-row">
           {cols.map((colIndex) => {
-            // calculate the number of the cell
+            // calculate the number of the cell (from 0 to 9)
             const cellNumber = rowIndex * cols.length + colIndex;
             return (
-            <Square key={`cell-${rowIndex}-${colIndex}`}  value={squares[cellNumber]} onSquareClick={() => handleClick(cellNumber)} />
+            <Square key={`cell-${rowIndex}-${colIndex}`}  value={squares[cellNumber]} winnerClass={squareWinnerClasses[cellNumber]} onSquareClick={() => handleClick(cellNumber)} />
             );
           })}
         </div>
@@ -126,29 +156,4 @@ export default function Game() {
       </div>
     </div>
   );
-}
-
-function calculateWinner(squares) {
-  const possibleWinningCases = [
-    // rows
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    // columns
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    // diagonals
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-
-  // Go through all possible cases and check that the same player has all the spaces
-  for (let i = 0; i < possibleWinningCases.length; i++) {
-    const [a, b, c] = possibleWinningCases[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
 }
