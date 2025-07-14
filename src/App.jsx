@@ -55,13 +55,34 @@ function Board({ xIsNext, squares, onPlay }) {
 
     return null;
   }
+
+  function resetSquareWinnerClasses() {
+    for (let i = 0; i < squareWinnerClasses.length; i++) {
+      squareWinnerClasses[i] = '';
+    }
+  }
+
+  function allSquaresFilledIn() {
+    for (let i = 0; i < squares.length; i++) {
+      // If there is a square not filled in yet
+      if (squares[i] == null) {
+        return false;
+      }
+    }
+    return true;
+  }
   
   const winner = calculateWinner(squares);
+  const gameEnded = allSquaresFilledIn();
+
   let status;
   if (winner) {
     status = 'Winner: ' + winner;
+  } else if (gameEnded) {
+    status = 'There was a draw';
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    resetSquareWinnerClasses();
   }
 
   // Create board programmatically
