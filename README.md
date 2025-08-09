@@ -20,7 +20,7 @@
 I created this project by following [the tutorial in the React documentation](https://react.dev/learn/tutorial-tic-tac-toe).
 
 **Features I Added:**
-* On the current move, "You are at move #..." is displayed (instead of a default button)
+* On the current move, "You are at move #..." is displayed (instead of a button)
 * When building the `Board`, two loops are used instead of hardcoding the content
 * A toggle button is displayed which lets users sort the moves in either ascending or descending order
 * When someone wins, the three squares that caused the win are highlighted
